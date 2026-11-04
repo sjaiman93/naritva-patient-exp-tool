@@ -1,8 +1,9 @@
-{
+﻿{
   "name": "naritva-patient-experience-tool",
   "version": "2.0.0",
   "description": "Trilingual Patient Experience & Grievance Recovery PWA for Naritva Women's Medical Studio",
   "scripts": {
+    "build": "echo 'Static assets ready'",
     "start": "node server.js",
     "dev": "node server.js"
   },
