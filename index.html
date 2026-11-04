@@ -462,6 +462,61 @@
   const NARITVA_GOOGLE_URL = "https://search.google.com/local/writereview?placeid=ChIJuz-WAUODXjkR_CESNq_0iJg"; // TODO: verify Place ID
 
   /* =====================================================================
+     SUPABASE CLOUD SYNC (Optional - fill credentials to enable cloud persistence)
+     ===================================================================== */
+  const SUPABASE_URL = "";       // e.g. "https://xxxx.supabase.co"
+  const SUPABASE_ANON_KEY = "";  // e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+  async function saveToSupabase(rec) {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+    try {
+      fetch(`${SUPABASE_URL}/rest/v1/patient_reviews`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          journey: rec.journey,
+          language: rec.language,
+          doctor_name: rec.doctor,
+          doctor_score: rec.doctor_strength_score,
+          sister_recommend: rec.would_recommend,
+          tier: rec.tier,
+          constructive_tags: rec.issues,
+          staff_appreciated: rec.staff_thanked,
+          generated_draft: document.getElementById('finalHospitalDraft')?.value,
+          ticket_ref: rec.ticket_ref
+        })
+      }).catch(e => console.warn('[Supabase review save error]', e));
+
+      if (rec.tier >= 2 && rec.ticket_ref) {
+        fetch(`${SUPABASE_URL}/rest/v1/grievance_tickets`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            ticket_ref: rec.ticket_ref,
+            tier: rec.tier,
+            journey: rec.journey,
+            areas: rec.issues,
+            reasons: rec.tier_reasons,
+            status: 'open'
+          })
+        }).catch(e => console.warn('[Supabase ticket save error]', e));
+      }
+    } catch (err) {
+      console.warn('[Supabase exception]', err);
+    }
+  }
+
+  /* =====================================================================
      2. STATE
      ===================================================================== */
   let lang = 'gu';
@@ -1341,6 +1396,7 @@
       routed_to: tier === 3 ? 'PRO + Medical Superintendent (2h SLA)' : (tier === 2 ? 'Department head (48h)' : 'Dashboard only')
     };
     console.log('[Naritva record]', record);
+    saveToSupabase(record);
 
     const card = document.getElementById('reviewCard');
     card.classList.remove('hidden');
