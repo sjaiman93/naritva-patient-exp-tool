@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naritva — Patient Experience Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#0D9488;--teal-d:#0F766E;--rose:#E11D48;--amber:#B45309;--ink:#0F172A;--muted:#64748B;--bg:#F6F8FA;}
+  body{font-family:'Plus Jakarta Sans','Noto Sans Gujarati',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  .card{background:#fff;border:1px solid #E6EAEF;border-radius:16px;}
+  .tabx{border-bottom:2px solid transparent;}
+  .tabx.on{border-color:var(--teal);color:var(--teal-d);font-weight:700;}
+  .bar{height:8px;border-radius:99px;background:#EEF2F6;overflow:hidden;}
+  .bar>i{display:block;height:100%;border-radius:99px;}
+  table{border-collapse:separate;border-spacing:0;}
+  th{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+  td,th{padding:9px 10px;border-bottom:1px solid #EEF2F6;text-align:left;}
+  tbody tr:last-child td{border-bottom:0;}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;}
+  .num{font-variant-numeric:tabular-nums;}
+  .hm{width:100%;aspect-ratio:1.6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  @media print{.noprint{display:none}body{background:#fff}}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ================= LOGIN ================= -->
+<div id="login" class="min-h-screen flex items-center justify-center p-4">
+  <div class="card w-full max-w-sm p-7 space-y-5 shadow-sm">
+    <div class="text-center space-y-1">
+      <div class="h-12 flex items-center justify-center">
+        <img src="/naritva-logo.png" alt="Naritva" class="h-full object-contain" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'text-xl font-extrabold',textContent:'Naritva'}))">
+      </div>
+      <p class="text-xs text-slate-500 font-medium">Patient Experience Dashboard</p>
+    </div>
+    <div class="space-y-2.5">
+      <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Sign in as</label>
+      <select id="roleSel" class="w-full text-sm px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-teal-600">
+        <option value="director">Director / Management</option>
+        <option value="pro">Patient Relations Officer</option>
+        <option value="doctor">Doctor (own scores only)</option>
+        <option value="admin">Admin / IT (roster)</option>
+      </select>
+      <input id="pw" type="password" placeholder="Password" class="w-full text-sm px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-teal-600">
+      <button onclick="doLogin()" class="w-full py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm transition">Sign in</button>
+      <p id="pwErr" class="hidden text-[11px] text-rose-600 font-semibold text-center">Incorrect password.</p>
+    </div>
+    <p class="text-[10px] text-slate-400 text-center leading-relaxed">
+      Demo build · password <code class="bg-slate-100 px-1 rounded">naritva</code><br>
+      Replace with Supabase Auth before go-live.
+    </p>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" class="hidden">
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <img src="/naritva-logo.png" alt="Naritva" class="h-8 object-contain" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'font-extrabold text-sm',textContent:'Naritva'}))">
+        <div class="min-w-0">
+          <div class="text-xs font-bold leading-tight truncate">Patient Experience</div>
+          <div class="text-[10px] text-slate-500" id="whoami"></div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 noprint">
+        <select id="range" onchange="render()" class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white">
+          <option value="4">Last 4 weeks</option>
+          <option value="8" selected>Last 8 weeks</option>
+          <option value="12">Last 12 weeks</option>
+        </select>
+        <button onclick="location.reload()" class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50">Sign out</button>
+      </div>
+    </div>
+    <div class="max-w-6xl mx-auto px-4 flex gap-5 overflow-x-auto text-xs" id="tabs"></div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-5 space-y-5">
+    <div id="view"></div>
+    <p class="text-[10px] text-slate-400 text-center pb-6 leading-relaxed">
+      No patient names, phone numbers or exact visit times are stored. Feedback is grouped by week and shift,
+      so a response cannot be traced to one patient from this dashboard.
+    </p>
+  </main>
+</div>
+
+<script>
+/* =====================================================================
+   DEMO DATA. Replace loadData() with Supabase queries — the shapes below
+   match naritva-schema.sql exactly.
+   ===================================================================== */
+const STAFF = [
+  {id:'d1',name:'Dr. A. Mehta',role:'doctor',dept:'Obstetrics'},
+  {id:'d2',name:'Dr. R. Desai',role:'doctor',dept:'Gynaecology'},
+  {id:'d3',name:'Dr. K. Patel',role:'doctor',dept:'Paediatrics'},
+  {id:'m1',name:'Dr. S. Joshi (MO)',role:'medical_officer',dept:'Duty MO'},
+  {id:'n1',name:'Sister Jyoti',role:'nurse_sister',dept:'Maternity ward'},
+  {id:'n2',name:'Sister Rekha',role:'nurse_sister',dept:'Maternity ward'},
+  {id:'n3',name:'Sister Hetal',role:'nurse_sister',dept:'Night nursing'},
+  {id:'n4',name:'Sister Nisha',role:'nurse_sister',dept:'OPD / Vaccination'},
+  {id:'b1',name:'Brother Ravi',role:'nurse_brother',dept:'Nursing attendant'},
+  {id:'b2',name:'Brother Amit',role:'nurse_brother',dept:'Nursing attendant'},
+  {id:'r1',name:'Krupa',role:'reception',dept:'Front desk'},
+  {id:'r2',name:'Dhara',role:'reception',dept:'Front desk'},
+  {id:'p1',name:'Nilesh',role:'pro',dept:'Patient Relations'},
+  {id:'h1',name:'Kamla ben',role:'housekeeping',dept:'Housekeeping'},
+  {id:'h2',name:'Savita ben',role:'housekeeping',dept:'Housekeeping'},
+  {id:'ph1',name:'Jignesh',role:'pharmacy',dept:'In-house pharmacy'},
+  {id:'l1',name:'Mitesh',role:'lab',dept:'Pathology'}
+];
+const ROLE_LABEL={doctor:'Doctor',medical_officer:'Medical Officer',nurse_sister:'Sister',nurse_brother:'Brother',reception:'Reception',pro:'Patient Relations',housekeeping:'Housekeeping',pharmacy:'Pharmacy',lab:'Lab'};
+const AREA_LABEL={labor:'Labour room / OT',nurse_day:'Nursing (day)',nurse_night:'Nursing (night)',baby:'Baby & feeding',pharmacy:'Pharmacy',lab:'Lab / reports',food:'Food / diet',room:'Room & washroom',housekeeping:'Housekeeping',discharge:'Discharge',billing:'Billing',safety:'Safety & dignity',waiting:'Waiting time',reception:'Reception',privacy:'Privacy',clean:'Cleanliness',vaccine:'Vaccination',waiting_area:'Waiting area'};
+const STRENGTH={explained:'Explained clearly',listened:'Listened patiently',confidence:'Gave confidence',answered:'Answered questions',gentle_child:'Gentle with child',child_ease:'Child at ease'};
+const WISH={more_time:'Wanted more time',more_explain:'Wanted more explanation'};
+const SEV_LABEL={O:'Operational',S:'Service',C:'Clinical / dignity'};
+const REASON={queue:'Long queue',unavailable:'Item not available',price:'Price unclear',behaviour:'Staff behaviour',
+ delayed:'Report delayed',repeat:'Sample taken twice',not_explained:'Not explained',late:'Served late',taste:'Taste',
+ diet:'Not as per diet advice',washroom:'Washroom not clean',linen:'Bedsheets not changed',ac_water:'AC / water issue',
+ not_resp:'Not responsive',file_wait:'Waited long for file',instructions:'Home-care instructions unclear',
+ tpa:'Insurance (TPA) delay',unexpected:'Unexpected charges',slow:'Slow to respond',not_found:'Could not find a nurse',
+ slow_bell:'Call bell slow to answer',handover:'Gaps at shift change',not_gentle:'Not gentle',rushed:'Felt rushed',
+ pain:'Pain not well managed',informed:'Not kept informed',feeding:'Needed more feeding help',
+ care_unclear:'Baby care steps unclear',long_wait:'Long wait',long:'Long wait',improve:'Could be better',
+ needs:'Needs attention',mixed:'Sick & healthy kids together',card_unclear:'Card / next dose not explained',rough:'Felt rough'};
+
+let DATA={responses:[],tickets:[]}, ROLE='director', ME=null, TAB='overview';
+
+function mondayOf(d){const x=new Date(d);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x.toISOString().slice(0,10);}
+function weeksBack(n){const out=[];const t=new Date();for(let i=n-1;i>=0;i--){const d=new Date(t);d.setDate(d.getDate()-i*7);out.push(mondayOf(d));}return out;}
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const chance=p=>Math.random()<p;
+
+function loadData(){           // ← swap for Supabase
+  const weeks=weeksBack(12), resp=[], tix=[];
+  const IPD_ISSUES=[['pharmacy','queue','O'],['pharmacy','unavailable','O'],['lab','delayed','O'],['food','late','O'],['food','taste','O'],['room','washroom','O'],['housekeeping','not_resp','O'],['discharge','file_wait','O'],['billing','tpa','O'],['billing','not_explained','O'],['nurse_night','slow_bell','S'],['nurse_night','handover','S'],['nurse_day','slow','S'],['labor','rushed','S'],['baby','feeding','S'],['nurse_night','not_gentle','C'],['labor','pain','C'],['safety',null,'C'],['billing','unexpected','C']];
+  const OPD_ISSUES=[['waiting','long_wait','O'],['reception','improve','S'],['privacy','needs','S'],['clean','needs','O']];
+  const BABY_ISSUES=[['waiting','long','O'],['waiting_area','mixed','S'],['vaccine','card_unclear','O'],['vaccine','rough','C']];
+  let n=0;
+  weeks.forEach((w,wi)=>{
+    const growth=0.55+wi*0.045;                       // adoption ramps up
+    const nightPenalty=wi<8?0.34:0.17;                 // night nursing improves after week 8
+    const count=Math.round((26+Math.random()*10)*growth);
+    for(let i=0;i<count;i++){
+      const journey=pick(['opd','opd','opd','ipd','ipd','baby']);
+      const shift=journey==='ipd'?pick(['day','day','night']):'day';
+      const docs=journey==='baby'?['d3']:journey==='ipd'?['d1','m1']:['d1','d2'];
+      const doctor_id=pick(docs);
+      const pool=journey==='baby'?['explained','listened','gentle_child','child_ease']:['explained','listened','confidence','answered'];
+      const docQuality=doctor_id==='m1'?0.42:doctor_id==='d2'?0.55:0.72;
+      const strengths=pool.filter(()=>chance(docQuality));
+      const wishes=chance(doctor_id==='m1'?0.3:0.1)?[pick(['more_time','more_explain'])]:[];
+      const issues=[];
+      const src=journey==='ipd'?IPD_ISSUES:journey==='baby'?BABY_ISSUES:OPD_ISSUES;
+      const nIss=chance(0.52)?0:chance(0.7)?1:chance(0.6)?2:3;
+      for(let k=0;k<nIss;k++){
+        let cand=pick(src);
+        if(cand[0]==='nurse_night'&&!chance(shift==='night'?nightPenalty+0.4:0.05))continue;
+        if(cand[2]==='C'&&!chance(0.22))continue;
+        if(!issues.some(x=>x[0]===cand[0]&&x[1]===cand[1]))issues.push(cand);
+      }
+      const hasC=issues.some(x=>x[2]==='C');
+      const rec=hasC?pick(['maybe','not_yet','not_yet']):issues.length>1?pick(['definitely','maybe']):chance(0.88)?'definitely':'maybe';
+      const areas=new Set(issues.map(x=>x[0]));
+      let tier=1;
+      const reasons=[];
+      if(hasC){tier=3;reasons.push('clinical / safety / dignity item');}
+      if(rec==='not_yet'){tier=3;if(!reasons.includes('would not recommend yet'))reasons.push('would not recommend yet');}
+      if(areas.size>=3){tier=3;reasons.push('3+ areas with problems');}
+      if(tier===1&&issues.length){tier=(issues.length===1&&issues[0][2]==='O'&&rec==='definitely')?1:2;if(tier===2)reasons.push('minor / operational friction');}
+      const shouts=[];
+      const spool=journey==='ipd'?(shift==='night'?['n3','b1','b2']:['n1','n2','r1']):journey==='baby'?['n4','r2']:['n4','r1','r2'];
+      spool.forEach(s=>{if(chance(tier===1?0.34:0.12))shouts.push(s);});
+      const id='r'+(++n);
+      resp.push({id,week_start:w,journey,shift,language:pick(['gu','gu','gu','hi','en']),doctor_id,
+        doctor_strengths:strengths,doctor_wishes:wishes,doctor_score:strengths.length,
+        issues:issues.map(([area,reason,severity])=>({area,reason,severity})),
+        shoutouts:shouts,would_recommend:rec,tier,tier_reasons:reasons,
+        review_posted:tier===1?chance(0.74):chance(0.4)});
+      if(tier>=2){
+        const ageW=weeks.length-1-wi;
+        const resolved=ageW>0?chance(0.93):chance(0.45);
+        tix.push({ref:'NRT-'+w.slice(2).replace(/-/g,'')+'-'+(100+Math.floor(Math.random()*900)),response_id:id,
+          week_start:w,journey,tier,
+          area:issues[0]?issues[0][0]:'safety',
+          routed_to:tier===3?'PRO + Medical Superintendent':'Department head',
+          status:resolved?'closed':chance(0.5)?'in_progress':'open',
+          breached:!resolved&&ageW>0,
+          patient_confirmed:resolved?chance(0.72):null});
+      }
+    }
+  });
+  return {responses:resp,tickets:tix};
+}
+
+/* ================= helpers ================= */
+const staffById=id=>STAFF.find(s=>s.id===id)||{name:'—',role:'doctor',dept:''};
+const inRange=()=>{const w=weeksBack(+document.getElementById('range').value);return DATA.responses.filter(r=>w.includes(r.week_start));};
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function barRow(label,val,max,color,right){
+  return `<div class="space-y-1"><div class="flex justify-between text-[11px]"><span class="font-medium">${esc(label)}</span><span class="num text-slate-500 font-semibold">${right}</span></div>
+  <div class="bar"><i style="width:${max?Math.round(val/max*100):0}%;background:${color}"></i></div></div>`;
+}
+function stat(label,value,sub,tone){
+  const c={good:'text-teal-700',warn:'text-amber-700',bad:'text-rose-700'}[tone]||'text-slate-900';
+  return `<div class="card p-4"><div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">${label}</div>
+  <div class="text-2xl font-extrabold num mt-1 ${c}">${value}</div><div class="text-[11px] text-slate-500 mt-0.5">${sub}</div></div>`;
+}
+
+/* ================= views ================= */
+function vOverview(){
+  const R=inRange(), n=R.length;
+  const t1=R.filter(r=>r.tier===1).length,t2=R.filter(r=>r.tier===2).length,t3=R.filter(r=>r.tier===3).length;
+  const def=R.filter(r=>r.would_recommend==='definitely').length;
+  const posted=R.filter(r=>r.review_posted).length;
+  const weeks=[...new Set(R.map(r=>r.week_start))].sort();
+  const byWeek=weeks.map(w=>{const g=R.filter(r=>r.week_start===w);
+    return {w,n:g.length,rec:pct(g.filter(r=>r.would_recommend==='definitely').length,g.length)};});
+  const maxN=Math.max(...byWeek.map(x=>x.n),1);
+
+  // issue counts
+  const ic={};R.forEach(r=>r.issues.forEach(i=>{ic[i.area]=(ic[i.area]||0)+1;}));
+  const top=Object.entries(ic).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxI=top[0]?top[0][1]:1;
+
+  return `
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    ${stat('Responses',n,'in selected period')}
+    ${stat('Would recommend',pct(def,n)+'%',def+' of '+n+' said "Definitely"',pct(def,n)>=80?'good':'warn')}
+    ${stat('Needs attention',t2+t3,t3+' serious · '+t2+' minor',t3>n*0.1?'bad':'warn')}
+    ${stat('Posted to Google',pct(posted,n)+'%',posted+' opened the review page')}
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-4 mt-4">
+    <div class="card p-4">
+      <div class="text-xs font-bold mb-3">Responses per week</div>
+      <div class="flex items-end gap-1.5">
+        ${byWeek.map(x=>`<div class="flex-1 flex flex-col justify-end items-center gap-1" title="${x.w}: ${x.n} responses">
+          <div class="text-[9px] font-bold num text-slate-500">${x.n}</div>
+          <div class="w-full rounded-t" style="height:${Math.max(Math.round(x.n/maxN*120),4)}px;background:#0D9488"></div>
+          <div class="text-[9px] text-slate-400">${x.w.slice(8)}/${x.w.slice(5,7)}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card p-4">
+      <div class="text-xs font-bold mb-3">Most-reported problem areas</div>
+      <div class="space-y-2.5">
+        ${top.length?top.map(([a,c])=>barRow(AREA_LABEL[a]||a,c,maxI,'#B45309',c)).join(''):'<p class="text-xs text-slate-400">No issues reported.</p>'}
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-4 mt-4">
+    <div class="text-xs font-bold mb-1">Feedback mix</div>
+    <p class="text-[11px] text-slate-500 mb-3">Tier 1 posts straight to Google. Tier 2 goes to the department head. Tier 3 goes to Patient Relations within 2 hours.</p>
+    <div class="flex h-7 rounded-lg overflow-hidden text-[10px] font-bold text-white">
+      <div style="width:${pct(t1,n)}%;background:#0D9488" class="flex items-center justify-center">${pct(t1,n)}%</div>
+      <div style="width:${pct(t2,n)}%;background:#B45309" class="flex items-center justify-center">${pct(t2,n)}%</div>
+      <div style="width:${pct(t3,n)}%;background:#E11D48" class="flex items-center justify-center">${pct(t3,n)}%</div>
+    </div>
+    <div class="flex gap-4 mt-2 text-[10px] text-slate-600">
+      <span><i class="inline-block w-2 h-2 rounded-full" style="background:#0D9488"></i> Tier 1 · ${t1}</span>
+      <span><i class="inline-block w-2 h-2 rounded-full" style="background:#B45309"></i> Tier 2 · ${t2}</span>
+      <span><i class="inline-block w-2 h-2 rounded-full" style="background:#E11D48"></i> Tier 3 · ${t3}</span>
+    </div>
+  </div>`;
+}
+
+function vDoctors(){
+  let R=inRange();
+  if(ROLE==='doctor')R=R.filter(r=>r.doctor_id===ME);
+  const ids=[...new Set(R.map(r=>r.doctor_id))];
+  const rows=ids.map(id=>{
+    const g=R.filter(r=>r.doctor_id===id);
+    const avg=g.reduce((s,r)=>s+r.doctor_score,0)/g.length;
+    const sc={};g.forEach(r=>r.doctor_strengths.forEach(s=>sc[s]=(sc[s]||0)+1));
+    const wc={};g.forEach(r=>r.doctor_wishes.forEach(s=>wc[s]=(wc[s]||0)+1));
+    return {id,n:g.length,avg,sc,wc,rec:pct(g.filter(r=>r.would_recommend==='definitely').length,g.length)};
+  }).sort((a,b)=>b.avg-a.avg);
+
+  return `
+  <p class="text-[11px] text-slate-500 mb-3">Patients tap what stood out, they never grade the doctor. The score is simply how many strengths were tapped out of 4. "Wishes" are coaching notes, not complaints.</p>
+  <div class="grid md:grid-cols-2 gap-4">
+  ${rows.map(d=>{const s=staffById(d.id);const tone=d.avg>=2.4?'#0D9488':d.avg>=1.6?'#B45309':'#E11D48';
+    const top=Object.entries(d.sc).sort((a,b)=>b[1]-a[1]);
+    return `<div class="card p-4 space-y-3">
+      <div class="flex items-start justify-between">
+        <div><div class="font-bold text-sm">${esc(s.name)}</div>
+          <div class="text-[11px] text-slate-500">${esc(s.dept)} · ${d.n} responses</div></div>
+        <div class="text-right"><div class="text-2xl font-extrabold num" style="color:${tone}">${d.avg.toFixed(1)}</div>
+          <div class="text-[10px] text-slate-400">avg strengths / 4</div></div>
+      </div>
+      <div class="space-y-2">
+        ${top.map(([k,v])=>barRow(STRENGTH[k]||k,v,d.n,'#0D9488',pct(v,d.n)+'%')).join('')}
+      </div>
+      ${Object.keys(d.wc).length?`<div class="pt-2 border-t border-slate-100">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Coaching notes</div>
+        ${Object.entries(d.wc).map(([k,v])=>`<div class="text-[11px] text-slate-600">${WISH[k]||k} — <span class="num font-semibold">${v}</span> (${pct(v,d.n)}%)</div>`).join('')}
+      </div>`:''}
+      <div class="text-[11px] text-slate-500 pt-1">Would recommend: <span class="font-bold num text-slate-800">${d.rec}%</span></div>
+    </div>`;}).join('')}
+  </div>`;
+}
+
+function vStaff(){
+  const R=inRange();
+  const cnt={};R.forEach(r=>r.shoutouts.forEach(s=>cnt[s]=(cnt[s]||0)+1));
+  const groups={};STAFF.forEach(s=>{if(s.role==='doctor')return;(groups[s.role]=groups[s.role]||[]).push({...s,n:cnt[s.id]||0});});
+  const max=Math.max(...Object.values(cnt),1);
+  return `
+  <p class="text-[11px] text-slate-500 mb-3">Counts come only from names a patient actually tapped. Nobody is credited or blamed just for being on shift.</p>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+  ${Object.entries(groups).map(([role,list])=>`<div class="card p-4">
+    <div class="text-xs font-bold mb-3">${ROLE_LABEL[role]||role}</div>
+    <div class="space-y-2.5">
+      ${list.sort((a,b)=>b.n-a.n).map(s=>barRow(s.name,s.n,max,'#0D9488',s.n)).join('')}
+    </div></div>`).join('')}
+  </div>`;
+}
+
+function vIssues(){
+  const R=inRange();
+  const areas=[...new Set(R.flatMap(r=>r.issues.map(i=>i.area)))];
+  const ipd=R.filter(r=>r.journey==='ipd');
+  const day=ipd.filter(r=>r.shift==='day'), night=ipd.filter(r=>r.shift==='night');
+  const rate=(set,a)=>set.length?set.filter(r=>r.issues.some(i=>i.area===a)).length/set.length*100:0;
+  const rows=areas.map(a=>({a,d:rate(day,a),n:rate(night,a),
+    all:R.filter(r=>r.issues.some(i=>i.area===a)).length})).sort((x,y)=>y.all-x.all);
+  const cell=v=>{const c=v===0?'#F1F5F9':v<8?'#CCFBF1':v<16?'#FDE68A':v<28?'#FCA5A5':'#F43F5E';
+    const t=v>=16?'#fff':'#0F172A';return `<div class="hm" style="background:${c};color:${t}">${v?v.toFixed(0)+'%':'—'}</div>`;};
+  // reasons breakdown
+  const rc={};R.forEach(r=>r.issues.forEach(i=>{if(!i.reason)return;const k=i.area+'|'+i.reason+'|'+i.severity;rc[k]=(rc[k]||0)+1;}));
+  const topR=Object.entries(rc).sort((a,b)=>b[1]-a[1]).slice(0,12);
+
+  return `
+  <div class="card p-4">
+    <div class="text-xs font-bold">Day vs night — inpatient stays only</div>
+    <p class="text-[11px] text-slate-500 mt-1 mb-3">Share of stays that reported a problem in each area. This is the view that shows whether night shifts are under-staffed.</p>
+    <div class="overflow-x-auto"><table class="text-xs w-full max-w-xl">
+      <thead><tr><th>Area</th><th class="w-20">Day</th><th class="w-20">Night</th><th class="w-16">Gap</th></tr></thead>
+      <tbody>${rows.filter(r=>r.d||r.n).map(r=>{const gap=r.n-r.d;
+        return `<tr><td class="font-medium">${AREA_LABEL[r.a]||r.a}</td><td>${cell(r.d)}</td><td>${cell(r.n)}</td>
+        <td class="num font-bold ${gap>8?'text-rose-600':gap<-8?'text-teal-700':'text-slate-400'}">${gap>0?'+':''}${gap.toFixed(0)}%</td></tr>`;}).join('')}
+      </tbody></table></div>
+  </div>
+
+  <div class="card p-4 mt-4">
+    <div class="text-xs font-bold mb-3">What patients actually tapped</div>
+    <div class="overflow-x-auto"><table class="w-full text-xs">
+      <thead><tr><th>Area</th><th>Reason</th><th>Type</th><th class="text-right">Count</th></tr></thead>
+      <tbody>${topR.map(([k,v])=>{const [a,rs,sev]=k.split('|');
+        const p={O:'bg-slate-100 text-slate-700',S:'bg-amber-100 text-amber-800',C:'bg-rose-100 text-rose-700'}[sev];
+        return `<tr><td class="font-medium">${AREA_LABEL[a]||a}</td><td class="text-slate-600">${esc(REASON[rs]||rs)}</td>
+        <td><span class="pill ${p}">${SEV_LABEL[sev]}</span></td><td class="text-right num font-bold">${v}</td></tr>`;}).join('')}
+      </tbody></table></div>
+    <p class="text-[10px] text-slate-400 mt-3">Clinical and dignity items never appear in a public Google review. They go straight to Patient Relations.</p>
+  </div>`;
+}
+
+function vTickets(){
+  const w=weeksBack(+document.getElementById('range').value);
+  const T=DATA.tickets.filter(t=>w.includes(t.week_start));
+  const open=T.filter(t=>t.status!=='closed');
+  const breached=T.filter(t=>t.breached);
+  const closed=T.filter(t=>t.status==='closed');
+  const conf=closed.filter(t=>t.patient_confirmed).length;
+  const sb={open:'bg-rose-100 text-rose-700',in_progress:'bg-amber-100 text-amber-800',closed:'bg-teal-100 text-teal-800'};
+  return `
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    ${stat('Open tickets',open.length,'awaiting action',open.length?'bad':'good')}
+    ${stat('Past deadline',breached.length,'2h / 48h missed',breached.length?'bad':'good')}
+    ${stat('Closed',closed.length,'in selected period','good')}
+    ${stat('Made it right',pct(conf,closed.length)+'%',conf+' patients confirmed',pct(conf,closed.length)>=70?'good':'warn')}
+  </div>
+  <div class="card p-4 mt-4">
+    <div class="text-xs font-bold mb-3">Service recovery queue</div>
+    <div class="overflow-x-auto"><table class="w-full text-xs min-w-[640px]">
+      <thead><tr><th>Ref</th><th>Week</th><th>Journey</th><th>Tier</th><th>Area</th><th>Routed to</th><th>Status</th><th>Patient confirmed</th></tr></thead>
+      <tbody>${T.sort((a,b)=>(a.status==='closed')-(b.status==='closed')||b.week_start.localeCompare(a.week_start)).slice(0,40).map(t=>`
+        <tr class="${t.breached?'bg-rose-50/60':''}">
+          <td class="font-mono text-[10px] font-semibold">${t.ref}</td>
+          <td class="text-slate-500">${t.week_start.slice(5)}</td>
+          <td class="uppercase text-[10px] font-bold text-slate-500">${t.journey}</td>
+          <td><span class="pill ${t.tier===3?'bg-rose-100 text-rose-700':'bg-amber-100 text-amber-800'}">T${t.tier}</span></td>
+          <td>${AREA_LABEL[t.area]||t.area}</td>
+          <td class="text-slate-600">${t.routed_to}</td>
+          <td><span class="pill ${sb[t.status]}">${t.status.replace('_',' ')}</span>${t.breached?' <span class="pill bg-rose-600 text-white">late</span>':''}</td>
+          <td>${t.patient_confirmed===null?'<span class="text-slate-300">—</span>':t.patient_confirmed?'✅':'❌'}</td>
+        </tr>`).join('')}
+      </tbody></table></div>
+    <p class="text-[10px] text-slate-400 mt-3">Patients give no phone number, so recovery happens over WhatsApp or at the PRO desk, using the reference number.</p>
+  </div>`;
+}
+
+function vRoster(){
+  const groups={};STAFF.forEach(s=>(groups[s.role]=groups[s.role]||[]).push(s));
+  const today=new Date().toISOString().slice(0,10);
+  return `
+  <div class="card p-4">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <div><div class="text-xs font-bold">Today's duty roster</div>
+        <p class="text-[11px] text-slate-500">Set this each morning. It decides which names patients can tap, and which doctor their feedback is tagged to.</p></div>
+      <input type="date" value="${today}" class="text-xs px-2.5 py-1.5 rounded-lg border border-slate-200">
+    </div>
+  </div>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+  ${Object.entries(groups).map(([role,list])=>`<div class="card p-4">
+    <div class="text-xs font-bold mb-2.5">${ROLE_LABEL[role]||role}</div>
+    <div class="space-y-1.5">
+      ${list.map(s=>`<label class="flex items-center gap-2 text-[11px] py-1">
+        <input type="checkbox" ${chance(0.55)?'checked':''} class="rounded border-slate-300 text-teal-600">
+        <span class="flex-1 font-medium">${esc(s.name)}</span>
+        <select class="text-[10px] px-1.5 py-0.5 rounded border border-slate-200 bg-white">
+          <option>Day</option><option>Night</option><option>Full</option>
+        </select></label>`).join('')}
+      <button class="mt-2 w-full text-[11px] font-semibold py-1.5 rounded-lg border border-dashed border-slate-300 text-slate-500 hover:border-teal-600 hover:text-teal-700">+ Add ${ (ROLE_LABEL[role]||role).toLowerCase() }</button>
+    </div></div>`).join('')}
+  </div>
+  <div class="card p-4 mt-4 bg-amber-50 border-amber-200">
+    <p class="text-[11px] text-amber-900"><strong>Demo only.</strong> Saving the roster needs the Supabase tables in <code>naritva-schema.sql</code>. Nothing on this screen is stored yet.</p>
+  </div>`;
+}
+
+/* ================= shell ================= */
+const TABS={
+  director:[['overview','Overview'],['doctors','Doctors'],['staff','Staff recognition'],['issues','Issues & shifts'],['tickets','Service recovery']],
+  pro:[['tickets','Service recovery'],['issues','Issues & shifts'],['overview','Overview']],
+  doctor:[['doctors','My feedback']],
+  admin:[['roster','Duty roster'],['overview','Overview']]
+};
+function render(){
+  const tabs=TABS[ROLE];
+  if(!tabs.some(t=>t[0]===TAB))TAB=tabs[0][0];
+  document.getElementById('tabs').innerHTML=tabs.map(([k,l])=>
+    `<button onclick="TAB='${k}';render()" class="tabx py-2.5 whitespace-nowrap ${TAB===k?'on':'text-slate-500'}">${l}</button>`).join('');
+  document.getElementById('view').innerHTML=
+    TAB==='overview'?vOverview():TAB==='doctors'?vDoctors():TAB==='staff'?vStaff():
+    TAB==='issues'?vIssues():TAB==='tickets'?vTickets():vRoster();
+}
+function doLogin(){
+  if(document.getElementById('pw').value!=='naritva'){document.getElementById('pwErr').classList.remove('hidden');return;}
+  ROLE=document.getElementById('roleSel').value;
+  if(ROLE==='doctor')ME='d1';
+  DATA=loadData();
+  document.getElementById('whoami').textContent=
+    ROLE==='doctor'?staffById(ME).name+' · own feedback only':
+    ROLE==='pro'?'Patient Relations Officer':ROLE==='admin'?'Admin / IT':'Director view';
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  render();
+}
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>

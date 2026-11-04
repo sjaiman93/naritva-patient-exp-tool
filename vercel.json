@@ -1,5 +1,11 @@
-{
+﻿{
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/admin", "destination": "/dashboard.html" },
+    { "source": "/patient", "destination": "/index.html" },
+    { "source": "/review", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

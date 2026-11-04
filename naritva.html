@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naritva Women's Medical Studio — Patient Experience</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Noto+Sans+Gujarati:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --hospital-primary: #0D9488;      /* Warm Healing Teal / Medical Studio */
+      --hospital-primary-dark: #0F766E;
+      --hospital-rose: #E11D48;         /* Maternity Rose */
+      --hospital-rose-soft: #FFF1F2;
+      --hospital-teal-soft: #F0FDFA;
+      --bg-porcelain: #F8FAFC;          /* Clean Clinical Slate/Porcelain */
+      --card-border: #E2E8F0;
+      --text-dark: #0F172A;
+      --text-muted: #64748B;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Gujarati', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-porcelain);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .serif-hospital {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .chip-btn {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border-color: var(--card-border);
+      background-color: #FFFFFF;
+      user-select: none;
+    }
+
+    .chip-btn:hover {
+      border-color: var(--hospital-primary);
+    }
+
+    .chip-selected {
+      background-color: #0D9488 !important;
+      color: #FFFFFF !important;
+      border-color: #0D9488 !important;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.25);
+    }
+
+    .chip-selected-warning {
+      background-color: #E11D48 !important;
+      color: #FFFFFF !important;
+      border-color: #E11D48 !important;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#0D9488] selection:text-white">
+
+  <!-- TOP APP BAR -->
+  <header class="sticky top-0 z-30 glass-nav border-b border-slate-200 transition-all">
+    <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <!-- Naritva Emblem / Logo -->
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 via-rose-600 to-teal-600 text-white flex items-center justify-center font-bold text-base shadow-sm serif-hospital italic">
+          N
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-bold text-sm leading-tight text-slate-900 tracking-tight" id="headerTitle">Naritva Hospital</h1>
+            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">Studio</span>
+          </div>
+          <p class="text-[10px] text-slate-500 font-medium" id="headerSub">Women's Medical Studio • Ahmedabad</p>
+        </div>
+      </div>
+
+      <!-- Quick Language Switch Button -->
+      <button 
+        type="button" 
+        onclick="openLanguageModal()" 
+        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-700 shadow-xs hover:border-teal-600 transition active:scale-95"
+      >
+        <span class="text-xs">🌐</span>
+        <span id="currentLangLabel">ગુજરાતી</span>
+        <span class="text-[10px] text-slate-400">▾</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="max-w-md mx-auto w-full px-4 pt-4 pb-16 space-y-4">
+
+    <!-- SCREEN 0: UPFRONT 3-LANGUAGE SELECTOR (SHOWN IF NO LANG SELECTED) -->
+    <div id="screenLanguage" class="space-y-4 fade-in">
+      <div class="bg-gradient-to-br from-rose-50 to-teal-50 rounded-2xl p-5 border border-rose-100/80 shadow-xs space-y-2 text-center">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-white shadow-sm flex items-center justify-center text-rose-600 text-xl font-bold serif-hospital">
+          🌸
+        </div>
+        <h2 class="text-xl font-bold text-slate-900 leading-snug">
+          Welcome to Naritva Hospital
+        </h2>
+        <p class="text-xs text-rose-800 font-medium leading-relaxed">
+          "Naritva tamne yaad rakhe chhe 💛"<br>
+          <span class="text-[11px] text-slate-600">આપના સાચા અનુભવથી બીજી માતાઓ અને બહેનોને ભરોસો મળશે.</span>
+        </p>
+        <div class="pt-1 text-[11px] font-semibold uppercase tracking-wider text-teal-800">
+          Select Your Preferred Language / આપની ભાષા પસંદ કરો
+        </div>
+      </div>
+
+      <!-- 3 LARGE ACCESSIBLE LANGUAGE CARDS -->
+      <div class="grid grid-cols-1 gap-2.5">
+        <button 
+          type="button" 
+          onclick="setLanguage('gu')" 
+          class="w-full p-4 rounded-2xl border-2 border-teal-600/30 bg-white hover:border-teal-600 hover:bg-teal-50/40 transition active:scale-[0.98] text-left flex items-center justify-between shadow-xs"
+        >
+          <div class="space-y-0.5">
+            <div class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span>ગુજરાતી</span>
+              <span class="text-[10px] px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full font-semibold">અમદાવાદ ભાષા</span>
+            </div>
+            <p class="text-xs text-slate-500">સરળ ગુજરાતીમાં ૨૦-સેકન્ડ પ્રતિભાવ</p>
+          </div>
+          <span class="text-lg text-teal-700 font-bold">→</span>
+        </button>
+
+        <button 
+          type="button" 
+          onclick="setLanguage('hi')" 
+          class="w-full p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-teal-600 hover:bg-teal-50/40 transition active:scale-[0.98] text-left flex items-center justify-between shadow-xs"
+        >
+          <div class="space-y-0.5">
+            <div class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span>हिन्दी</span>
+              <span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full font-semibold">Hindi</span>
+            </div>
+            <p class="text-xs text-slate-500">सरल हिंदी में अस्पताल अनुभव साझा करें</p>
+          </div>
+          <span class="text-lg text-slate-400 font-bold">→</span>
+        </button>
+
+        <button 
+          type="button" 
+          onclick="setLanguage('en')" 
+          class="w-full p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-teal-600 hover:bg-teal-50/40 transition active:scale-[0.98] text-left flex items-center justify-between shadow-xs"
+        >
+          <div class="space-y-0.5">
+            <div class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span>English</span>
+              <span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full font-semibold">Global</span>
+            </div>
+            <p class="text-xs text-slate-500">Quick 20-second patient feedback</p>
+          </div>
+          <span class="text-lg text-slate-400 font-bold">→</span>
+        </button>
+      </div>
+
+      <div class="text-center pt-2">
+        <span class="text-[11px] text-slate-400">🔒 100% Private & Direct Hospital Care Review</span>
+      </div>
+    </div>
+
+    <!-- SCREEN 1: FORK VISIT TYPE (OPD vs DELIVERY/ADMITTED vs BABY) -->
+    <div id="screenVisitType" class="hidden space-y-3 fade-in">
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 text-[10px] font-semibold uppercase tracking-wider border border-teal-200/60">
+          <span class="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
+          <span id="visitBadgeText">Step 1 of 2: Visit Type</span>
+        </div>
+        <h2 class="text-xl font-bold tracking-tight text-slate-900" id="visitPromptText">
+          How did we care for you today?
+        </h2>
+        <p class="text-xs text-slate-500" id="visitSubText">
+          Please tap your consultation or stay type to get relevant questions:
+        </p>
+      </div>
+
+      <!-- 3 FORK CARDS -->
+      <div class="grid grid-cols-1 gap-2.5 pt-1">
+        <!-- 1. OPD CHECKUP -->
+        <button 
+          type="button" 
+          onclick="selectVisitType('opd')" 
+          class="visit-card p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-teal-600 transition active:scale-[0.98] text-left flex items-center justify-between shadow-xs group"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center text-xl font-bold group-hover:scale-105 transition">
+              🩺
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900" id="opdTitle">OPD Checkup</h3>
+              <p class="text-[11px] text-slate-500" id="opdDesc">Consultation, Sonography, Routine test</p>
+            </div>
+          </div>
+          <span class="text-slate-400 font-bold text-sm">→</span>
+        </button>
+
+        <!-- 2. DELIVERY / ADMITTED (IPD) -->
+        <button 
+          type="button" 
+          onclick="selectVisitType('ipd')" 
+          class="visit-card p-4 rounded-2xl border-2 border-rose-200/80 bg-white hover:border-rose-500 transition active:scale-[0.98] text-left flex items-center justify-between shadow-xs group"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl font-bold group-hover:scale-105 transition">
+              🤱
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h3 class="text-sm font-bold text-slate-900" id="ipdTitle">Delivery / Admitted</h3>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">Maternity</span>
+              </div>
+              <p class="text-[11px] text-slate-500" id="ipdDesc">Childbirth, Maternity room stay, Surgery</p>
+            </div>
+          </div>
+          <span class="text-rose-500 font-bold text-sm">→</span>
+        </button>
+
+        <!-- 3. BABY VISIT -->
+        <button 
+          type="button" 
+          onclick="selectVisitType('baby')" 
+          class="visit-card p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-teal-600 transition active:scale-[0.98] text-left flex items-center justify-between shadow-xs group"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl font-bold group-hover:scale-105 transition">
+              👶
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900" id="babyTitle">Baby's Visit</h3>
+              <p class="text-[11px] text-slate-500" id="babyDesc">Pediatric checkup, Vaccination, Infant care</p>
+            </div>
+          </div>
+          <span class="text-slate-400 font-bold text-sm">→</span>
+        </button>
+      </div>
+
+      <div class="text-center pt-2">
+        <button type="button" onclick="goToLanguageScreen()" class="text-xs text-slate-400 hover:text-teal-700 font-medium underline">
+          ← Change Language / ભાષા બદલો
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: MAIN TACTILE QUESTIONNAIRE (DYNAMIC ACCORDING TO VISIT TYPE) -->
+    <div id="screenQuestions" class="hidden space-y-4 fade-in">
+      
+      <!-- URGENT SAFETY INTERRUPT CALLOUT (CRITICAL CLAUDE RECOMMENDATION) -->
+      <div class="p-3 rounded-xl bg-red-50 border border-red-200 text-red-900 text-xs flex items-center justify-between shadow-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">🚨</span>
+          <span class="text-[11px] font-medium leading-tight" id="emergencyBannerText">
+            Emergency or immediate health concern? Call 24x7 Naritva Helpline: <strong>079-2281-0000</strong>
+          </span>
+        </div>
+        <a href="tel:07922810000" class="text-[11px] font-bold px-2 py-1 rounded bg-red-600 text-white flex-shrink-0 hover:bg-red-700">
+          Call Now
+        </a>
+      </div>
+
+      <!-- ACTIVE VISIT HEADER PILL -->
+      <div class="flex items-center justify-between bg-white px-3.5 py-2 rounded-xl border border-slate-200 text-xs">
+        <div class="flex items-center space-x-2">
+          <span id="activeVisitIcon" class="text-sm">🤱</span>
+          <span id="activeVisitLabel" class="font-bold text-slate-800">Maternity & Delivery Care</span>
+        </div>
+        <button type="button" onclick="goToVisitTypeScreen()" class="text-[11px] font-semibold text-teal-700 hover:underline">
+          Change Type
+        </button>
+      </div>
+
+      <!-- DYNAMIC QUESTION CARDS CONTAINER -->
+      <div id="questionsContainer" class="space-y-3.5">
+        <!-- Rendered via renderQuestions() -->
+      </div>
+
+      <!-- THE "SISTER / FRIEND TEST" (CULTURALLY CRITICAL CLAUDE RECOMMENDATION) -->
+      <div class="bg-white rounded-2xl p-4 border-2 border-rose-100 shadow-xs space-y-2.5">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-900" id="sisterTestLabel">
+            Would you suggest Naritva to your sister or friend?
+          </label>
+          <span class="text-[10px] font-semibold text-rose-600 uppercase" id="sisterBadge">Important</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2" id="sisterGroup">
+          <button type="button" onclick="selectSisterChoice('definitely', this)" class="chip-btn py-2.5 px-1 rounded-xl border text-xs font-medium text-slate-800 text-center hover:border-teal-600 transition active:scale-95">
+            <span class="block text-sm">💯</span>
+            <span id="sisterDefinitely">Definitely</span>
+          </button>
+          <button type="button" onclick="selectSisterChoice('maybe', this)" class="chip-btn py-2.5 px-1 rounded-xl border text-xs font-medium text-slate-800 text-center hover:border-teal-600 transition active:scale-95">
+            <span class="block text-sm">🤔</span>
+            <span id="sisterMaybe">Maybe</span>
+          </button>
+          <button type="button" onclick="selectSisterChoice('not_yet', this)" class="chip-btn py-2.5 px-1 rounded-xl border text-xs font-medium text-slate-800 text-center hover:border-rose-600 transition active:scale-95">
+            <span class="block text-sm">💬</span>
+            <span id="sisterNotYet">Not yet</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STAFF SHOUT-OUT (OPTIONAL) -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2.5">
+        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block" id="staffShoutoutLabel">
+          🌸 Special Thanks to Care Team (Optional)
+        </label>
+        <p class="text-[11px] text-slate-400" id="staffShoutoutSub">Tap names to appreciate caring staff:</p>
+        <div class="flex flex-wrap gap-1.5" id="staffPills">
+          <button type="button" onclick="toggleStaffName('Dr. Consultation Team', this)" class="chip-btn text-xs py-1.5 px-3 rounded-full border text-slate-700 hover:border-teal-600">
+            👩‍⚕️ Dr. Consulting Team
+          </button>
+          <button type="button" onclick="toggleStaffName('Sister Jyoti (Nursing)', this)" class="chip-btn text-xs py-1.5 px-3 rounded-full border text-slate-700 hover:border-teal-600">
+            💖 Sister Jyoti
+          </button>
+          <button type="button" onclick="toggleStaffName('Sister Rekha (Maternity Ward)', this)" class="chip-btn text-xs py-1.5 px-3 rounded-full border text-slate-700 hover:border-teal-600">
+            🌸 Sister Rekha
+          </button>
+          <button type="button" onclick="toggleStaffName('Reception & PRO Desk', this)" class="chip-btn text-xs py-1.5 px-3 rounded-full border text-slate-700 hover:border-teal-600">
+            🤝 Reception Team
+          </button>
+        </div>
+      </div>
+
+      <!-- OPTIONAL PERSONAL NOTE -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2">
+        <div class="flex items-center justify-between">
+          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block" id="noteLabel">
+            Words of Gratitude or Suggestion (Optional)
+          </label>
+          <span class="text-[11px] text-slate-400">Optional</span>
+        </div>
+        <textarea 
+          id="patientNote" 
+          rows="2" 
+          placeholder="Anything you'd like to share with the Naritva doctor or nursing team..." 
+          class="w-full text-sm p-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-teal-600 transition resize-none placeholder-slate-400 text-slate-900"
+        ></textarea>
+      </div>
+
+      <!-- VALIDATION ALERT -->
+      <div id="validationAlert" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-900 font-medium text-center shadow-xs">
+        <p id="validationAlertText">⚠️ Please tap at least Doctor care rating before generating draft.</p>
+      </div>
+
+      <!-- GENERATE BUTTON -->
+      <button 
+        type="button" 
+        onclick="generateHospitalReview()" 
+        id="generateBtn"
+        class="w-full py-4 px-6 rounded-2xl text-white font-semibold text-sm shadow-[0_6px_20px_rgba(13,148,136,0.30)] hover:opacity-95 transition active:scale-[0.98] flex items-center justify-center space-x-2 bg-gradient-to-r from-teal-600 to-teal-700"
+      >
+        <span id="generateBtnText">Create My Review Draft</span>
+        <span class="text-base">✨</span>
+      </button>
+
+      <!-- RESULT CARD & ESCALATION SECTION -->
+      <div id="reviewCard" class="hidden space-y-4 pt-1 transition-all duration-300">
+        
+        <!-- COMPASSIONATE PATIENT GRIEVANCE RECOVERY (IF ANY NEGATIVE CHIP IS CHOSEN) -->
+        <div id="hospitalRecoveryAlert" class="hidden p-4 rounded-2xl bg-amber-50/90 border-2 border-amber-300/80 text-xs text-amber-950 space-y-3 shadow-sm">
+          <div class="flex items-start gap-2">
+            <span class="text-lg">💛</span>
+            <div>
+              <h4 class="font-bold text-amber-950 text-sm leading-tight" id="recoveryTitle">
+                We're sorry your care wasn't perfect today.
+              </h4>
+              <p class="text-xs text-amber-900 mt-1 leading-relaxed" id="recoveryBody">
+                Your words reach our Medical Superintendent & Patient Relations Officer directly so we can resolve this immediately.
+              </p>
+            </div>
+          </div>
+
+          <!-- RECOVERY ACTIONS -->
+          <div class="space-y-2 pt-1">
+            <!-- 2-HOUR CALLBACK TICKET -->
+            <button 
+              type="button" 
+              onclick="requestCallbackTicket()" 
+              id="callbackBtn" 
+              class="w-full py-3 px-3 rounded-xl bg-amber-200/90 hover:bg-amber-300 text-amber-950 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-xs"
+            >
+              <span>📞</span>
+              <span id="callbackBtnText">Request 2-Hour Callback (Ref #NRT-1042)</span>
+            </button>
+            <div id="callbackSuccess" class="hidden text-center text-[11px] font-bold text-emerald-800 bg-emerald-50 py-2 px-3 rounded-lg border border-emerald-200">
+              ✅ Callback request logged! Patient Relations Officer will call you shortly.
+            </div>
+
+            <!-- WHATSAPP DIRECT TO PATIENT RELATIONS -->
+            <a 
+              id="hospitalWhatsappLink" 
+              href="https://wa.me/919687400903?text=Namaste%2C%20I%20am%20sharing%20feedback%20for%20Naritva%20Hospital%20Patient%20Care%20Desk" 
+              target="_blank" 
+              class="w-full py-2.5 px-3 rounded-xl bg-white border border-amber-300 text-amber-950 font-semibold text-xs flex items-center justify-center gap-2 hover:bg-amber-100/50 transition active:scale-95"
+            >
+              <span>💬</span>
+              <span id="whatsappBtnText">Speak Directly on WhatsApp to PRO Desk →</span>
+            </a>
+          </div>
+
+          <p class="text-[10px] text-amber-800 text-center font-medium">
+            (You can also post directly to Google Reviews below without restriction)
+          </p>
+        </div>
+
+        <!-- GENERATED REVIEW CARD (CLEAN & HIPAA/PRIVACY SAFE) -->
+        <div class="bg-white rounded-2xl p-5 border-2 border-teal-600/20 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-900" id="draftHeader">Your Review Draft</span>
+            </div>
+            <button type="button" onclick="generateHospitalReview()" class="text-[11px] text-teal-700 hover:text-teal-900 flex items-center gap-1 font-semibold">
+              <span>↺ Regenerate</span>
+            </button>
+          </div>
+
+          <p class="text-[11px] text-slate-500 font-medium" id="draftSub">
+            Crafted respectfully from your feedback (Safe & Privacy-Protected):
+          </p>
+
+          <textarea 
+            id="finalHospitalDraft" 
+            rows="4" 
+            class="w-full min-h-[110px] text-sm leading-relaxed p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-teal-600 transition text-slate-900 resize-y"
+          ></textarea>
+
+          <p class="text-[11px] text-slate-500 text-center font-medium bg-slate-50 py-2 px-3 rounded-lg border border-slate-200" id="draftEditHint">
+            ✏️ You can edit or personalize this draft anytime before posting to Google Maps.
+          </p>
+
+          <!-- GOOGLE REVIEWS BUTTON (ALWAYS ACCESSIBLE - NO REVIEW GATING POLICY) -->
+          <button 
+            type="button" 
+            onclick="copyAndOpenGoogle()" 
+            id="googleSubmitBtn"
+            class="w-full py-3.5 px-5 rounded-xl bg-teal-700 text-white font-bold text-sm shadow-[0_4px_16px_rgba(13,148,136,0.30)] hover:bg-teal-800 transition active:scale-[0.98] flex items-center justify-center space-x-2"
+          >
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+            </svg>
+            <span id="copyBtnText">Copy & Open Google Reviews</span>
+          </button>
+
+          <p class="text-[10px] text-slate-400 text-center font-medium" id="googleHint">
+            Opens Naritva Hospital Google Maps listing with review copied to clipboard
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="pt-6 pb-2 text-center text-[11px] text-slate-400 space-y-1">
+      <p>Naritva Women's Medical Studio • Patient Care Experience</p>
+      <p class="text-[10px] text-slate-300">Compliant with Google Reviews & Patient Privacy Standards</p>
+    </footer>
+
+  </main>
+
+  <!-- LANGUAGE MODAL (ACCESSIBLE FROM HEADER ANYTIME) -->
+  <div id="languageModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-3.5 shadow-xl fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="font-bold text-sm text-slate-900">Select Language / ભાષા પસંદ કરો</h3>
+        <button type="button" onclick="closeLanguageModal()" class="text-slate-400 hover:text-slate-700 text-lg leading-none">×</button>
+      </div>
+      <div class="space-y-2">
+        <button type="button" onclick="setLanguage('gu'); closeLanguageModal();" class="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-left hover:border-teal-600 hover:bg-teal-50/50 flex justify-between items-center text-xs font-semibold">
+          <span>ગુજરાતી (Gujarati)</span>
+          <span class="text-teal-600">✓</span>
+        </button>
+        <button type="button" onclick="setLanguage('hi'); closeLanguageModal();" class="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-left hover:border-teal-600 hover:bg-teal-50/50 flex justify-between items-center text-xs font-semibold">
+          <span>हिन्दी (Hindi)</span>
+          <span class="text-slate-400">›</span>
+        </button>
+        <button type="button" onclick="setLanguage('en'); closeLanguageModal();" class="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-left hover:border-teal-600 hover:bg-teal-50/50 flex justify-between items-center text-xs font-semibold">
+          <span>English</span>
+          <span class="text-slate-400">›</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // State
+    let currentLanguage = 'gu'; // default to Gujarati for Ahmedabad
+    let currentVisitType = 'ipd'; // 'opd', 'ipd', 'baby'
+    
+    const selections = {
+      doctor: null,
+      nursing: null,
+      safeRespected: [],
+      babySupport: null,
+      roomDischarge: [],
+      waitingTime: null,
+      frontDesk: null,
+      privacyComfort: null,
+      sisterChoice: null,
+      staffShoutouts: [],
+      patientNote: ''
+    };
+
+    // Dictionary covering everyday colloquial Ahmedabad Gujarati, Hindi & English
+    const I18N = {
+      gu: {
+        code: 'gu',
+        label: 'ગુજરાતી',
+        headerTitle: 'નારીત્વ હોસ્પિટલ',
+        headerSub: 'વુમન્સ મેડિકલ સ્ટુડિયો • અમદાવાદ',
+        visitBadge: 'પગલું ૧/૨: મુલાકાતનો પ્રકાર',
+        visitPrompt: 'આજે આપની મુલાકાત કયા પ્રકારની હતી?',
+        visitSub: 'યોગ્ય પ્રશ્નો મેળવવા માટે નીચેનામાંથી એક વિકલ્પ પસંદ કરો:',
+        opdTitle: 'OPD ચેકઅપ',
+        opdDesc: 'ડૉક્ટર તપાસ, સોનોગ્રાફી અથવા રૂટીન વિઝિટ',
+        ipdTitle: 'ડિલિવરી / દાખલ થયા હતા',
+        ipdDesc: 'પ્રસૂતિ સંભાળ, ડિલિવરી અથવા ઇનડોર રૂમ રોકાણ',
+        babyTitle: 'બાળકની તપાસ',
+        babyDesc: 'બાળરોગ તપાસ, રસીકરણ અથવા શિશુ સંભાળ',
+        emergencyBanner: 'ઇમરજન્સી કે તાત્કાલિક તબીબી જરૂર છે? 24x7 હેલ્પલાઇન: 079-2281-0000',
+        callNow: 'કૉલ કરો',
+        changeType: 'પ્રકાર બદલો',
+        sisterTest: 'શું તમે નારીત્વ તમારી બહેન કે સહેલીને સૂચવશો?',
+        sisterDef: 'ચોક્કસ',
+        sisterMay: 'કદાચ',
+        sisterNot: 'હજી નહીં',
+        staffLabel: '🌸 સ્ટાફ માટે વિશેષ આભાર (મરજિયાત)',
+        staffSub: 'સહયોગી સ્ટાફના નામ પર ટેપ કરો:',
+        noteLabel: 'ડૉક્ટર અથવા સ્ટાફ માટે સંદેશ (મરજિયાત)',
+        notePlaceholder: 'ડૉક્ટર કે નર્સિંગ ટીમ માટે આપનો કોઈ વિશેષ અનુભવ અથવા સૂચન...',
+        generateBtn: 'મારો રિવ્યુ ડ્રાફ્ટ બનાવો',
+        draftHeader: 'આપનો રિવ્યુ ડ્રાફ્ટ',
+        draftSub: 'આપના પ્રતિભાવમાંથી આપોઆપ તૈયાર કરેલ (સંપૂર્ણ પ્રાઇવેટ અને સુરક્ષિત):',
+        draftHint: '✏️ ગૂગલ પર પોસ્ટ કરતા પહેલા આપ આ ડ્રાફ્ટમાં ફેરફાર કરી શકો છો.',
+        copyBtn: 'ગૂગલ રિવ્યુ કોપી કરો અને પોસ્ટ કરો',
+        copyBtnDone: '✅ કોપી થઈ ગયું! ગૂગલ મેપ્સ ખૂલી રહ્યું છે...',
+        googleHint: 'નારીત્વ હોસ્પિટલનું ગૂગલ મેપ્સ પેજ ખૂલશે જ્યાં રિવ્યુ પેસ્ટ કરી શકાશે',
+        recoveryTitle: 'અમારી સેવામાં કંઈક કચાશ રહી તે બદલ અમે દિલગીર છીએ.',
+        recoveryBody: 'આપની વાત અમારા મેડિકલ સુપરિન્ટેન્ડેન્ટ અને પેશન્ટ કેર હેડ સુધી સીધી પહોંચશે જેથી યોગ્ય ઉકેલ લાવી શકાય.',
+        callbackBtn: '📞 ૨ કલાકમાં કૉલબેકની વિનંતી કરો (Ref #NRT-1042)',
+        whatsappBtn: '💬 પેશન્ટ રિલેશન્સ ઓફિસર સાથે વોટ્સએપ પર વાત કરો →',
+        validationDoctor: '⚠️ કૃપા કરીને આગળ વધવા માટે ડૉક્ટર સંભાળ વિશે ટેપ કરો.'
+      },
+      hi: {
+        code: 'hi',
+        label: 'हिन्दी',
+        headerTitle: 'नारीत्व हॉस्पिटल',
+        headerSub: 'विमेंस मेडिकल स्टूडियो • अहमदाबाद',
+        visitBadge: 'चरण 1/2: परामर्श का प्रकार',
+        visitPrompt: 'आज अस्पताल में आपकी विज़िट किस प्रकार की थी?',
+        visitSub: 'सटीक प्रश्नों के लिए नीचे दिए गए विकल्प में से एक चुनें:',
+        opdTitle: 'OPD चेकअप',
+        opdDesc: 'डॉक्टर जांच, सोनोग्राफी या सामान्य परामर्श',
+        ipdTitle: 'डिलीवरी / भर्ती हुए थे',
+        ipdDesc: 'प्रसूति, डिलीवरी अथवा अस्पताल में भर्ती/कमरा',
+        babyTitle: 'बच्चे की जांच',
+        babyDesc: 'बालरोग परामर्श, टीकाकरण या शिशु देखभाल',
+        emergencyBanner: 'आपातकालीन या तुरंत चिकित्सा सहायता? 24x7 हेल्पलाइन: 079-2281-0000',
+        callNow: 'कॉल करें',
+        changeType: 'बदलें',
+        sisterTest: 'क्या आप नारीत्व अपनी बहन या सहेली को सुझाएंगे?',
+        sisterDef: 'ज़रूर',
+        sisterMay: 'शायद',
+        sisterNot: 'अभी नहीं',
+        staffLabel: '🌸 देखभाल टीम का विशेष आभार (वैकल्पिक)',
+        staffSub: 'मददगार स्टाफ के नाम पर टैप करें:',
+        noteLabel: 'डॉक्टर या स्टाफ के लिए संदेश (वैकल्पिक)',
+        notePlaceholder: 'डॉक्टर या नर्सिंग टीम के लिए आपका कोई विशेष अनुभव या सुझाव...',
+        generateBtn: 'मेरा रिव्यू ड्राफ्ट बनाएं',
+        draftHeader: 'आपका रिव्यू ड्राफ्ट',
+        draftSub: 'आपके चयन के आधार पर तैयार (गोपनीयता व मर्यादा का पूरा ध्यान):',
+        draftHint: '✏️ गूगल पर पोस्ट करने से पहले आप इस ड्राफ्ट में बदलाव कर सकते हैं।',
+        copyBtn: 'गूगल रिव्यू कॉपी करें और पोस्ट करें',
+        copyBtnDone: '✅ कॉपी हो गया! गूगल मैप्स खुल रहा है...',
+        googleHint: 'नारीत्व हॉस्पिटल का गूगल मैप्स पेज खुलेगा जहां आप पेस्ट कर सकते हैं',
+        recoveryTitle: 'हमारी सेवा में कोई कमी रही हो तो हमें खेद है।',
+        recoveryBody: 'आपकी बात सीधे हमारे मेडिकल सुपरिटेंडेंट और पेशेंट केयर अधिकारी तक पहुंचेगी ताकि तुरंत समाधान हो सके।',
+        callbackBtn: '📞 2 घंटे में कॉलबैक का अनुरोध करें (Ref #NRT-1042)',
+        whatsappBtn: '💬 पेशेंट केयर ऑफिसर से सीधे व्हाट्सएप पर बात करें →',
+        validationDoctor: '⚠️ कृपया आगे बढ़ने के लिए डॉक्टर परामर्श पर अपना अनुभव चुनें।'
+      },
+      en: {
+        code: 'en',
+        label: 'English',
+        headerTitle: 'Naritva Hospital',
+        headerSub: "Women's Medical Studio • Ahmedabad",
+        visitBadge: 'Step 1 of 2: Visit Type',
+        visitPrompt: 'How did we care for you today?',
+        visitSub: 'Please select your visit category for relevant questions:',
+        opdTitle: 'OPD Checkup',
+        opdDesc: 'Doctor consultation, Sonography, or Routine visit',
+        ipdTitle: 'Delivery / Admitted',
+        ipdDesc: 'Childbirth, Maternity room stay, or Indoor care',
+        babyTitle: "Baby's Visit",
+        babyDesc: 'Pediatric checkup, Vaccination, or Infant care',
+        emergencyBanner: 'Urgent medical concern? Call 24x7 Naritva Helpline: 079-2281-0000',
+        callNow: 'Call Now',
+        changeType: 'Change',
+        sisterTest: 'Would you suggest Naritva to your sister or friend?',
+        sisterDef: 'Definitely',
+        sisterMay: 'Maybe',
+        sisterNot: 'Not yet',
+        staffLabel: '🌸 Special Thanks to Care Team (Optional)',
+        staffSub: 'Tap staff names to appreciate:',
+        noteLabel: 'Words of Gratitude or Suggestion (Optional)',
+        notePlaceholder: 'Anything you would like to share with the Naritva doctor or nursing team...',
+        generateBtn: 'Create My Review Draft',
+        draftHeader: 'Your Review Draft',
+        draftSub: 'Crafted respectfully from your feedback (Safe & Privacy-Protected):',
+        draftHint: '✏️ You can edit or personalize this draft anytime before posting to Google Maps.',
+        copyBtn: 'Copy & Open Google Reviews',
+        copyBtnDone: '✅ Copied! Opening Google Maps...',
+        googleHint: 'Opens Naritva Hospital Google Maps listing with review copied to clipboard',
+        recoveryTitle: "We're truly sorry your care wasn't perfect today.",
+        recoveryBody: 'Your feedback reaches our Medical Superintendent and Patient Relations team directly for prompt resolution.',
+        callbackBtn: '📞 Request 2-Hour Callback (Ref #NRT-1042)',
+        whatsappBtn: '💬 Speak Directly on WhatsApp to PRO Desk →',
+        validationDoctor: '⚠️ Please tap your Doctor care experience above to continue.'
+      }
+    };
+
+    // Hospital Google Review URL (Ahmedabad listing placeholder)
+    const NARITVA_GOOGLE_URL = "https://search.google.com/local/writereview?placeid=ChIJuz-WAUODXjkR_CESNq_0iJg";
+
+    // Initialize UI
+    function init() {
+      applyLanguage(currentLanguage);
+    }
+
+    function openLanguageModal() {
+      document.getElementById('languageModal').classList.remove('hidden');
+    }
+
+    function closeLanguageModal() {
+      document.getElementById('languageModal').classList.add('hidden');
+    }
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      applyLanguage(lang);
+      // Advance to visit type screen
+      document.getElementById('screenLanguage').classList.add('hidden');
+      document.getElementById('screenVisitType').classList.remove('hidden');
+      document.getElementById('screenQuestions').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToLanguageScreen() {
+      document.getElementById('screenLanguage').classList.remove('hidden');
+      document.getElementById('screenVisitType').classList.add('hidden');
+      document.getElementById('screenQuestions').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToVisitTypeScreen() {
+      document.getElementById('screenLanguage').classList.add('hidden');
+      document.getElementById('screenVisitType').classList.remove('hidden');
+      document.getElementById('screenQuestions').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function applyLanguage(lang) {
+      const t = I18N[lang];
+      document.getElementById('currentLangLabel').innerText = t.label;
+      document.getElementById('headerTitle').innerText = t.headerTitle;
+      document.getElementById('headerSub').innerText = t.headerSub;
+      
+      // Screen 1
+      document.getElementById('visitBadgeText').innerText = t.visitBadge;
+      document.getElementById('visitPromptText').innerText = t.visitPrompt;
+      document.getElementById('visitSubText').innerText = t.visitSub;
+      document.getElementById('opdTitle').innerText = t.opdTitle;
+      document.getElementById('opdDesc').innerText = t.opdDesc;
+      document.getElementById('ipdTitle').innerText = t.ipdTitle;
+      document.getElementById('ipdDesc').innerText = t.ipdDesc;
+      document.getElementById('babyTitle').innerText = t.babyTitle;
+      document.getElementById('babyDesc').innerText = t.babyDesc;
+
+      // Screen 2
+      document.getElementById('emergencyBannerText').innerHTML = t.emergencyBanner;
+      document.getElementById('sisterTestLabel').innerText = t.sisterTest;
+      document.getElementById('sisterDefinitely').innerText = t.sisterDef;
+      document.getElementById('sisterMaybe').innerText = t.sisterMay;
+      document.getElementById('sisterNotYet').innerText = t.sisterNot;
+      document.getElementById('staffShoutoutLabel').innerText = t.staffLabel;
+      document.getElementById('staffShoutoutSub').innerText = t.staffSub;
+      document.getElementById('noteLabel').innerText = t.noteLabel;
+      document.getElementById('patientNote').placeholder = t.notePlaceholder;
+      document.getElementById('generateBtnText').innerText = t.generateBtn;
+      document.getElementById('draftHeader').innerText = t.draftHeader;
+      document.getElementById('draftSub').innerText = t.draftSub;
+      document.getElementById('draftEditHint').innerText = t.draftHint;
+      document.getElementById('copyBtnText').innerText = t.copyBtn;
+      document.getElementById('googleHint').innerText = t.googleHint;
+      document.getElementById('recoveryTitle').innerText = t.recoveryTitle;
+      document.getElementById('recoveryBody').innerText = t.recoveryBody;
+      document.getElementById('callbackBtnText').innerText = t.callbackBtn;
+      document.getElementById('whatsappBtnText').innerText = t.whatsappBtn;
+      document.getElementById('validationAlertText').innerText = t.validationDoctor;
+
+      // Re-render questions if on question screen
+      if (!document.getElementById('screenQuestions').classList.contains('hidden')) {
+        renderQuestions();
+      }
+    }
+
+    function selectVisitType(type) {
+      currentVisitType = type;
+      document.getElementById('screenVisitType').classList.add('hidden');
+      document.getElementById('screenQuestions').classList.remove('hidden');
+
+      const t = I18N[currentLanguage];
+      const iconEl = document.getElementById('activeVisitIcon');
+      const labelEl = document.getElementById('activeVisitLabel');
+
+      if (type === 'ipd') {
+        iconEl.innerText = '🤱';
+        labelEl.innerText = t.ipdTitle;
+      } else if (type === 'opd') {
+        iconEl.innerText = '🩺';
+        labelEl.innerText = t.opdTitle;
+      } else {
+        iconEl.innerText = '👶';
+        labelEl.innerText = t.babyTitle;
+      }
+
+      renderQuestions();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Dynamic question definitions according to Claude's refined hospital specification
+    function getQuestionSchema() {
+      const lang = currentLanguage;
+
+      if (currentVisitType === 'ipd') {
+        // IPD Path: 5 Questions (Maternity / Admitted)
+        return [
+          {
+            id: 'doctor',
+            label: lang === 'gu' ? "૧. ડૉક્ટરની સંભાળ અને માર્ગદર્શન" : (lang === 'hi' ? "1. डॉक्टर की देखभाल व मार्गदर्शन" : "1. Doctor's Care & Reassurance"),
+            required: true,
+            type: 'single',
+            options: [
+              { val: 'explained', en: '🌟 Explained everything', gu: '🌟 બધું સરસ સમજાવ્યું', hi: '🌟 सब अच्छे से समझाया', isNeg: false },
+              { val: 'confidence', en: '🤝 Gave me confidence', gu: '🤝 હિંમત અને ભરોસો આપ્યો', hi: '🤝 हिम्मत और भरोसा दिया', isNeg: false },
+              { val: 'okay', en: '🙂 Okay', gu: '🙂 ઠીક', hi: '🙂 ठीक-ठाक', isNeg: false },
+              { val: 'more_time', en: '💬 Wanted more time', gu: '💬 વધુ સમય જોઈતો હતો', hi: '💬 और समय चाहिए था', isNeg: true }
+            ]
+          },
+          {
+            id: 'nursing',
+            label: lang === 'gu' ? "૨. નર્સિંગ સંભાળ (દિવસ અને રાત)" : (lang === 'hi' ? "2. नर्सिंग देखभाल (दिन और रात)" : "2. Nursing Care (Day & Night)"),
+            required: true,
+            type: 'single',
+            options: [
+              { val: 'cared_night', en: '💖 Cared day & night', gu: '💖 દિવસ-રાત સંભાળ રાખી', hi: '💖 दिन-रात ख्याल रखा', isNeg: false },
+              { val: 'quick', en: '⚡ Quick to help', gu: '⚡ તરત મદદ કરી', hi: '⚡ तुरंत मदद की', isNeg: false },
+              { val: 'wait', en: '⏳ Had to wait', gu: '⏳ રાહ જોવી પડી', hi: '⏳ इंतज़ार करना पड़ा', isNeg: true },
+              { val: 'warmer', en: '💬 Could be warmer', gu: '💬 થોડી વધુ હૂંફ જોઈતી હતી', hi: '💬 थोड़ा और अपनापन चाहिए था', isNeg: true }
+            ]
+          },
+          {
+            id: 'safeRespected',
+            label: lang === 'gu' ? "૩. સુરક્ષા, સન્માન અને પ્રાઇવસી (લાગુ પડતા પસંદ કરો)" : (lang === 'hi' ? "3. सुरक्षा, सम्मान व प्राइवेसी (लागू चुनें)" : "3. Felt Safe, Respected & Dignity"),
+            required: false,
+            type: 'multi',
+            options: [
+              { val: 'safe', en: '🛡️ Felt safe', gu: '🛡️ સુરક્ષિત લાગ્યું', hi: '🛡️ सुरक्षित महसूस हुआ', isNeg: false },
+              { val: 'pain', en: '🤲 Pain well managed', gu: '🤲 દુખાવામાં રાહત મળી', hi: '🤲 दर्द में अच्छी राहत', isNeg: false },
+              { val: 'privacy', en: '🙏 Privacy respected', gu: '🙏 પ્રાઇવસી જળવાઈ', hi: '🙏 प्राइवेसी का पूरा ध्यान', isNeg: false },
+              { val: 'not_always', en: '💬 Not always', gu: '💬 હંમેશા નહીં', hi: '💬 हमेशा नहीं', isNeg: true }
+            ]
+          },
+          {
+            id: 'babySupport',
+            label: lang === 'gu' ? "૪. બાળક અને સ્તનપાન માર્ગદર્શન" : (lang === 'hi' ? "4. बच्चा और स्तनपान मार्गदर्शन" : "4. Baby & Feeding Support"),
+            required: false,
+            type: 'single',
+            options: [
+              { val: 'baby_care', en: '👶 Great baby care', gu: '👶 બાળકની સરસ સંભાળ', hi: '👶 बच्चे की अच्छी देखभाल', isNeg: false },
+              { val: 'feeding_help', en: '🍼 Helpful feeding guidance', gu: '🍼 સ્તનપાનમાં સારું માર્ગદર્શન', hi: '🍼 स्तनपान में अच्छा मार्गदर्शन', isNeg: false },
+              { val: 'needed_help', en: '💬 Needed more help', gu: '💬 વધુ મદદ જોઈતી હતી', hi: '💬 और मदद चाहिए थी', isNeg: true }
+            ]
+          },
+          {
+            id: 'roomDischarge',
+            label: lang === 'gu' ? "૫. રૂમની સ્વચ્છતા અને ડિસ્ચાર્જ" : (lang === 'hi' ? "5. कमरा स्वच्छता व डिस्चार्ज" : "5. Room Hygiene & Going Home"),
+            required: false,
+            type: 'multi',
+            options: [
+              { val: 'clean_room', en: '✨ Clean room', gu: '✨ સ્વચ્છ રૂમ', hi: '✨ साफ़-सुथरा कमरा', isNeg: false },
+              { val: 'smooth_discharge', en: '📄 Smooth discharge', gu: '📄 સરળ ડિસ્ચાર્જ', hi: '📄 आसान डिस्चार्ज', isNeg: false },
+              { val: 'clear_bill', en: '💳 Clear billing', gu: '💳 સ્પષ્ટ બિલ', hi: '💳 साफ़ बिलिंग', isNeg: false },
+              { val: 'slow_discharge', en: '⏳ Discharge slow', gu: '⏳ ડિસ્ચાર્જમાં વાર લાગી', hi: '⏳ डिस्चार्ज में देर हुई', isNeg: true },
+              { val: 'unclear_bill', en: '💬 Billing unclear', gu: '💬 બિલ સમજાયું નહીં', hi: '💬 बिल समझ नहीं आया', isNeg: true }
+            ]
+          }
+        ];
+      } else {
+        // OPD & Baby Path: 4 Questions
+        return [
+          {
+            id: 'doctor',
+            label: lang === 'gu' ? "૧. ડૉક્ટરની સંભાળ અને માર્ગદર્શન" : (lang === 'hi' ? "1. डॉक्टर की देखभाल व मार्गदर्शन" : "1. Doctor's Care & Reassurance"),
+            required: true,
+            type: 'single',
+            options: [
+              { val: 'explained', en: '🌟 Explained everything', gu: '🌟 બધું સરસ સમજાવ્યું', hi: '🌟 सब अच्छे से समझाया', isNeg: false },
+              { val: 'confidence', en: '🤝 Gave me confidence', gu: '🤝 હિંમત અને ભરોસો આપ્યો', hi: '🤝 हिम्मत और भरोसा दिया', isNeg: false },
+              { val: 'okay', en: '🙂 Okay', gu: '🙂 ઠીક', hi: '🙂 ठीक-ठाक', isNeg: false },
+              { val: 'more_time', en: '💬 Wanted more time', gu: '💬 વધુ સમય જોઈતો હતો', hi: '💬 और समय चाहिए था', isNeg: true }
+            ]
+          },
+          {
+            id: 'waitingTime',
+            label: lang === 'gu' ? "૨. મુલાકાત માટે પ્રતીક્ષા સમય" : (lang === 'hi' ? "2. परामर्श के लिए इंतज़ार" : "2. Consultation Waiting Time"),
+            required: true,
+            type: 'single',
+            options: [
+              { val: 'on_time', en: '⚡ On time', gu: '⚡ સમયસર', hi: '⚡ समय पर', isNeg: false },
+              { val: 'short_wait', en: '🙂 Short wait', gu: '🙂 થોડી રાહ', hi: '🙂 थोड़ा इंतज़ार', isNeg: false },
+              { val: 'long_wait', en: '⏳ Long wait', gu: '⏳ લાંબી રાહ', hi: '⏳ लंबा इंतज़ार', isNeg: true }
+            ]
+          },
+          {
+            id: 'frontDesk',
+            label: lang === 'gu' ? "૩. રિસેપ્શન અને સ્ટાફ સહયોગ" : (lang === 'hi' ? "3. रिसेप्शन व सहायक स्टाफ" : "3. Front Desk & Staff Assistance"),
+            required: false,
+            type: 'single',
+            options: [
+              { val: 'helpful', en: '😊 Very helpful', gu: '😊 ખૂબ મદદરૂપ', hi: '😊 बहुत मददगार', isNeg: false },
+              { val: 'okay_staff', en: '🙂 Okay', gu: '🙂 ઠીક', hi: '🙂 ठीक-ठाक', isNeg: false },
+              { val: 'improve_staff', en: '💬 Could be better', gu: '💬 સુધારો થઈ શકે', hi: '💬 बेहतर हो सकता है', isNeg: true }
+            ]
+          },
+          {
+            id: 'privacyComfort',
+            label: lang === 'gu' ? "૪. ક્લિનિક સ્વચ્છતા અને પ્રાઇવસી" : (lang === 'hi' ? "4. क्लीनिक स्वच्छता व प्राइवेसी" : "4. Clinic Comfort & Privacy"),
+            required: false,
+            type: 'single',
+            options: [
+              { val: 'privacy_res', en: '🙏 Privacy respected', gu: '🙏 પ્રાઇવસી જળવાઈ', hi: '🙏 प्राइवेसी का ध्यान रखा', isNeg: false },
+              { val: 'clean_clinic', en: '✨ Clean & comfortable', gu: '✨ સ્વચ્છ અને આરામદાયક', hi: '✨ साफ़ और आरामदायक', isNeg: false },
+              { val: 'uneasy', en: '💬 Felt uneasy', gu: '💬 અસહજ લાગ્યું', hi: '💬 असहज लगा', isNeg: true }
+            ]
+          }
+        ];
+      }
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+      const schema = getQuestionSchema();
+      const lang = currentLanguage;
+
+      schema.forEach(q => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2.5 transition-all";
+        card.id = `card_${q.id}`;
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = "flex items-center justify-between";
+
+        const label = document.createElement('label');
+        label.className = "text-xs font-bold text-slate-800";
+        label.innerText = q.label;
+
+        const reqBadge = document.createElement('span');
+        reqBadge.className = "text-[10px] text-slate-400";
+        reqBadge.innerText = q.required ? "Required" : (q.type === 'multi' ? "Multi-select" : "Optional");
+
+        headerDiv.appendChild(label);
+        headerDiv.appendChild(reqBadge);
+        card.appendChild(headerDiv);
+
+        const grid = document.createElement('div');
+        grid.className = q.options.length <= 3 ? "grid grid-cols-3 gap-2" : "grid grid-cols-2 gap-2";
+
+        q.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.type = "button";
+          const optText = opt[lang] || opt.en;
+          btn.className = "chip-btn py-2.5 px-2 rounded-xl border text-xs font-medium text-slate-800 text-center";
+          btn.innerText = optText;
+          btn.setAttribute('data-val', opt.val);
+          btn.setAttribute('data-isneg', opt.isNeg ? "true" : "false");
+
+          // Check if already selected
+          if (q.type === 'single') {
+            if (selections[q.id] === opt.val) {
+              btn.classList.add(opt.isNeg ? 'chip-selected-warning' : 'chip-selected');
+            }
+            btn.onclick = () => {
+              selections[q.id] = opt.val;
+              Array.from(grid.children).forEach(c => {
+                c.classList.remove('chip-selected', 'chip-selected-warning');
+              });
+              btn.classList.add(opt.isNeg ? 'chip-selected-warning' : 'chip-selected');
+              checkNegativeSelections();
+            };
+          } else {
+            // Multi select
+            const arr = selections[q.id] || [];
+            if (arr.includes(opt.val)) {
+              btn.classList.add(opt.isNeg ? 'chip-selected-warning' : 'chip-selected');
+            }
+            btn.onclick = () => {
+              if (!selections[q.id]) selections[q.id] = [];
+              const idx = selections[q.id].indexOf(opt.val);
+              if (idx > -1) {
+                selections[q.id].splice(idx, 1);
+                btn.classList.remove('chip-selected', 'chip-selected-warning');
+              } else {
+                selections[q.id].push(opt.val);
+                btn.classList.add(opt.isNeg ? 'chip-selected-warning' : 'chip-selected');
+              }
+              checkNegativeSelections();
+            };
+          }
+
+          grid.appendChild(btn);
+        });
+
+        card.appendChild(grid);
+        container.appendChild(card);
+      });
+    }
+
+    function selectSisterChoice(val, btn) {
+      selections.sisterChoice = val;
+      const group = document.getElementById('sisterGroup');
+      Array.from(group.children).forEach(c => c.classList.remove('chip-selected', 'chip-selected-warning'));
+      if (val === 'not_yet') {
+        btn.classList.add('chip-selected-warning');
+      } else {
+        btn.classList.add('chip-selected');
+      }
+      checkNegativeSelections();
+    }
+
+    function toggleStaffName(name, btn) {
+      const idx = selections.staffShoutouts.indexOf(name);
+      if (idx > -1) {
+        selections.staffShoutouts.splice(idx, 1);
+        btn.classList.remove('chip-selected');
+      } else {
+        selections.staffShoutouts.push(name);
+        btn.classList.add('chip-selected');
+      }
+    }
+
+    // Check if any negative / friction chip was chosen to trigger the grievance recovery callout alongside Google
+    function checkNegativeSelections() {
+      let hasNegative = false;
+
+      // Negative values lookup
+      const negativeVals = new Set([
+        'more_time', 'wait', 'warmer', 'not_always', 'needed_help', 
+        'slow_discharge', 'unclear_bill', 'long_wait', 'improve_staff', 
+        'uneasy', 'not_yet'
+      ]);
+
+      if (negativeVals.has(selections.doctor)) hasNegative = true;
+      if (negativeVals.has(selections.nursing)) hasNegative = true;
+      if (negativeVals.has(selections.babySupport)) hasNegative = true;
+      if (negativeVals.has(selections.waitingTime)) hasNegative = true;
+      if (negativeVals.has(selections.frontDesk)) hasNegative = true;
+      if (negativeVals.has(selections.privacyComfort)) hasNegative = true;
+      if (selections.sisterChoice === 'not_yet') hasNegative = true;
+
+      (selections.safeRespected || []).forEach(v => { if (negativeVals.has(v)) hasNegative = true; });
+      (selections.roomDischarge || []).forEach(v => { if (negativeVals.has(v)) hasNegative = true; });
+
+      const alertBox = document.getElementById('hospitalRecoveryAlert');
+      if (hasNegative) {
+        alertBox.classList.remove('hidden');
+      } else {
+        alertBox.classList.add('hidden');
+      }
+
+      return hasNegative;
+    }
+
+    // Callback ticket logic
+    function requestCallbackTicket() {
+      const btn = document.getElementById('callbackBtn');
+      const successEl = document.getElementById('callbackSuccess');
+      btn.classList.add('opacity-50', 'pointer-events-none');
+      successEl.classList.remove('hidden');
+    }
+
+    // Generates a compassionate, 100% HIPAA/Privacy compliant review draft
+    function generateHospitalReview() {
+      const valAlert = document.getElementById('validationAlert');
+
+      // Validation: doctor rating required
+      if (!selections.doctor) {
+        valAlert.classList.remove('hidden');
+        document.getElementById('card_doctor')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      valAlert.classList.add('hidden');
+
+      const lang = currentLanguage;
+      const isIPD = currentVisitType === 'ipd';
+      const staffList = selections.staffShoutouts.join(', ');
+      const userNote = document.getElementById('patientNote').value.trim();
+
+      let draft = "";
+
+      // Safeguarded Review Generation (No IVF, no C-section, no diagnosis, no medical outcome claims)
+      if (lang === 'gu') {
+        if (isIPD) {
+          draft = "નારીત્વ હોસ્પિટલમાં અમારો અનુભવ ખૂબ જ હૂંફાળો અને સંતોષકારક રહ્યો. ";
+          if (selections.doctor === 'explained' || selections.doctor === 'confidence') {
+            draft += "ડૉક્ટરે દરેક બાબત ખૂબ ધીરજથી સમજાવી અને પરિવારને પૂરો ભરોસો આપ્યો. ";
+          }
+          if (selections.nursing === 'cared_night' || selections.nursing === 'quick') {
+            draft += "નર્સિંગ સ્ટાફે દિવસ અને રાત બંને સમયે ખૂબ જ પ્રેમાળ અને ત્વરિત સંભાળ રાખી. ";
+          }
+          if ((selections.safeRespected || []).includes('safe') || (selections.safeRespected || []).includes('privacy')) {
+            draft += "અહીં પ્રાઇવસી અને સ્વચ્છતાનું ઉત્તમ ધ્યાન રાખવામાં આવે છે. ";
+          }
+          if (staffList) {
+            draft += `વિશેષ આભાર ${staffList}. `;
+          }
+          if (userNote) {
+            draft += `"${userNote}" `;
+          }
+          draft += "અમદાવાદમાં માતા અને બાળકની સંભાળ માટે નારીત્વ એક ઉત્તમ હોસ્પિટલ છે.";
+        } else {
+          draft = "નારીત્વ હોસ્પિટલ (Naritva Women's Studio) ખાતે ડૉક્ટર પરામર્શ અને વ્યવસ્થા ખૂબ સરસ રહી. ";
+          if (selections.doctor === 'explained') {
+            draft += "ડૉક્ટરનું માર્ગદર્શન ખૂબ શાંતિપૂર્ણ અને સ્પષ્ટ હતું. ";
+          }
+          if (selections.waitingTime === 'on_time') {
+            draft += "ઓપીડીમાં સમયસર કન્સલ્ટેશન મળી ગયું અને પ્રાઇવસી જળવાઈ. ";
+          }
+          if (staffList) {
+            draft += `સહયોગ માટે ${staffList} નો ખૂબ આભાર. `;
+          }
+          if (userNote) {
+            draft += `"${userNote}" `;
+          }
+          draft += "મહિલાઓની તપાસ માટે ભરોસાપાત્ર હોસ્પિટલ છે.";
+        }
+      } else if (lang === 'hi') {
+        if (isIPD) {
+          draft = "नारीत्व हॉस्पिटल में हमारा अनुभव बहुत ही सुखद और संतोषजनक रहा। ";
+          if (selections.doctor === 'explained' || selections.doctor === 'confidence') {
+            draft += "डॉक्टर ने हर बात बहुत विनम्रता से समझाई और हमें पूरा हौसला दिया। ";
+          }
+          if (selections.nursing === 'cared_night' || selections.nursing === 'quick') {
+            draft += "नर्सिंग टीम ने दिन और रात दोनों समय बहुत संवेदनशील और अच्छी देखभाल की। ";
+          }
+          if ((selections.safeRespected || []).includes('safe') || (selections.safeRespected || []).includes('privacy')) {
+            draft += "अस्पताल में प्राइवेसी और साफ़-सफ़ाई का बहुत अच्छा ध्यान रखा गया। ";
+          }
+          if (staffList) {
+            draft += `विशेष रूप से ${staffList} का हार्दिक धन्यवाद। `;
+          }
+          if (userNote) {
+            draft += `"${userNote}" `;
+          }
+          draft += "अहमदाबाद में माँ और शिशु की देखभाल के लिए नारीत्व एक अत्यंत विश्वसनीय अस्पताल है।";
+        } else {
+          draft = "नारीत्व हॉस्पिटल में डॉक्टर परामर्श का अनुभव बहुत अच्छा रहा। ";
+          if (selections.doctor === 'explained') {
+            draft += "डॉक्टर ने बहुत धैर्यपूर्वक बात सुनी और सही सलाह दी। ";
+          }
+          if (selections.waitingTime === 'on_time') {
+            draft += "ओपीडी में समय प्रबंधन और क्लिनिक की स्वच्छता सराहनीय है। ";
+          }
+          if (staffList) {
+            draft += `स्टाफ ${staffList} का बहुत धन्यवाद। `;
+          }
+          if (userNote) {
+            draft += `"${userNote}" `;
+          }
+          draft += "महिलाओं के स्वास्थ्य और देखभाल के लिए एक बेहतरीन केंद्र।";
+        }
+      } else {
+        // English
+        if (isIPD) {
+          draft = "Our experience at Naritva Women's Medical Studio was truly reassuring and comforting. ";
+          if (selections.doctor === 'explained' || selections.doctor === 'confidence') {
+            draft += "The doctors were very patient, attentive, and gave our family complete confidence. ";
+          }
+          if (selections.nursing === 'cared_night' || selections.nursing === 'quick') {
+            draft += "The nursing team provided dedicated, gentle care around the clock. ";
+          }
+          if ((selections.safeRespected || []).includes('safe') || (selections.safeRespected || []).includes('privacy')) {
+            draft += "High standards of hygiene, personal dignity, and privacy were maintained throughout our stay. ";
+          }
+          if (staffList) {
+            draft += `Special thanks to ${staffList} for their warmth. `;
+          }
+          if (userNote) {
+            draft += `"${userNote}" `;
+          }
+          draft += "Highly recommend Naritva Hospital for compassionate maternity and women's healthcare in Ahmedabad.";
+        } else {
+          draft = "Had a very smooth consultation at Naritva Hospital. ";
+          if (selections.doctor === 'explained') {
+            draft += "The doctor was extremely calm, clear, and reassuring. ";
+          }
+          if (selections.waitingTime === 'on_time') {
+            draft += "The OPD process was punctual and patient privacy was well respected. ";
+          }
+          if (staffList) {
+            draft += `Thanks to ${staffList} for being so helpful. `;
+          }
+          if (userNote) {
+            draft += `"${userNote}" `;
+          }
+          draft += "A welcoming and trusted medical studio for women.";
+        }
+      }
+
+      // Populate text box
+      const finalBox = document.getElementById('finalHospitalDraft');
+      finalBox.value = draft;
+
+      // Reveal card & trigger recovery check
+      const card = document.getElementById('reviewCard');
+      card.classList.remove('hidden');
+      checkNegativeSelections();
+
+      // Scroll smoothly to review card
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Copy to clipboard & open Google Reviews listing
+    function copyAndOpenGoogle() {
+      const draftText = document.getElementById('finalHospitalDraft').value;
+      const copyBtnText = document.getElementById('copyBtnText');
+      const t = I18N[currentLanguage];
+
+      // Copy text
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(draftText).catch(() => {});
+      } else {
+        // Fallback for older webviews
+        const el = document.getElementById('finalHospitalDraft');
+        el.select();
+        document.execCommand('copy');
+      }
+
+      // Visual feedback
+      copyBtnText.innerText = t.copyBtnDone;
+      setTimeout(() => {
+        copyBtnText.innerText = t.copyBtn;
+      }, 3000);
+
+      // Open Google Reviews in new tab
+      window.open(NARITVA_GOOGLE_URL, '_blank');
+    }
+
+    // Run init on load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const http = require('http');
+﻿const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
@@ -20,14 +20,16 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   let reqPath = url.pathname;
   if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
+  if (reqPath === '/dashboard' || reqPath === '/admin') reqPath = '/dashboard.html';
+  if (reqPath === '/patient' || reqPath === '/review') reqPath = '/index.html';
 
   const cleanPath = path.normalize(reqPath).replace(/^(\.\.[\/\\])+/, '');
   const filePath = path.join(DIR, cleanPath);
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('Not Found');
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('404 Not Found - Naritva Patient Experience Platform');
       return;
     }
 
@@ -46,5 +48,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Naritva Patient Experience Server running at: http://localhost:${PORT}`);
+  console.log(`Naritva Patient Experience Platform running at: http://localhost:${PORT}`);
+  console.log(`- Patient Experience PWA: http://localhost:${PORT}/`);
+  console.log(`- Executive Cockpit:     http://localhost:${PORT}/dashboard`);
 });
